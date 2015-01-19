@@ -16,7 +16,7 @@ public:
     int numAttributes;
 
     AttributeData();
-    int machgedAttribute(int a, int b);
+    int matchedAttribute(int a, int b);
 
     static AttributeData getAttributeData(string fileName);
 };
@@ -26,7 +26,7 @@ AttributeData::AttributeData()
     numAttributes=0;
 }
 
-int AttributeData::machgedAttribute(int a, int b)
+int AttributeData::matchedAttribute(int a, int b)
 {
     //todo
 }
@@ -105,6 +105,20 @@ int main()
     GraphInputData graph = GraphInputData::getData("graph.txt");
     AttributeData attribute = AttributeData::getAttributeData("attribute.txt");
     for (int i=0; i<attribute.attrs.size(); i++) cout<<attribute.attrs[i]<<endl;
+
+
+    /**
+      psudo code by esha
+      for each node u
+            create a forest forest f
+            f <- u
+            for all neighbours v of u/f (correct)
+                if ((conditions to select v) ) (write the conditions)
+                    f<-v
+                endif
+            endfor
+       endfor
+      */
     return 0;
 }
 
