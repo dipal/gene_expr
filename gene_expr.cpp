@@ -132,45 +132,60 @@ AdjacencyMatrix GraphHelper::createAdjMatrix(EdgeList edges, int numNodes)
     return adjMatrix;
 }
 
+
+class Calculator
+{
+public:
+    GraphInputData graph;
+    AttributeData attribute;
+    AdjacencyMatrix adjMatrix;
+
+    Calculator(GraphInputData iGraph, AttributeData iAttr);
+    void calculate();
+};
+
+
+Calculator::Calculator(GraphInputData iGraph, AttributeData iAttr)
+{
+    graph = iGraph;
+    attribute = iAttr;
+
+    adjMatrix = GraphHelper::createAdjMatrix(graph.edges, graph.numNodes);
+}
+
+/**
+
+//esha
+for first level_one take every node in graph
+while level_one is not empty do
+    start with any node and extend (that node in DFS approach)
+        In extend function do
+            take it's neighbour from adjacency matrix,create pattern which is itemset of 2 items and make their neighbor list
+                check if they share 2 or more attribute in common
+                    if not prune that itemset
+                if this string is seen already or subset of another max itemset
+                //	we'll keep the itemset we get finally as string in accending order,then we'll check if it is already seen or not
+                    then prune
+                else if extend continues
+                    take the maximal itemset in result set
+                    keep count of total pruned brunchs
+                    print elapse time
+
+return
+*/
+
+void Calculator::calculate()
+{
+
+}
+
 int main()
 {
     GraphInputData graph = GraphInputData::getData("graph.txt");
     AttributeData attribute = AttributeData::getAttributeData("attribute.txt");
-    for (int i=0; i<attribute.attrs.size(); i++) cout<<attribute.attrs[i]<<endl;
 
-    cout<<graph.numNodes<<endl;
-    AdjacencyMatrix adjMatrix = GraphHelper::createAdjMatrix(graph.edges, graph.numNodes);
-    GraphHelper::printAdjMatrix(adjMatrix);
-    /**
-	
-	//esha
-	for first level_one take every node in graph
-	while level_one is not empty do
-		start with any node and extend (that node in DFS approach)
-			In extend function do
-				take it's neighbour from adjacency matrix,create pattern which is itemset of 2 items and make their neighbor list
-					check if they share 2 or more attribute in common
-						if not prune that itemset
-					if this string is seen already or subset of another max itemset
-					//	we'll keep the itemset we get finally as string in accending order,then we'll check if it is already seen or not
-						then prune
-					else if extend continues
-						take the maximal itemset in result set
-						keep count of total pruned brunchs
-						print elapse time 
-						
-	return 
-      psudo code by esha
-      for each node u
-            create a forest forest f
-            f <- u
-            for all neighbours v of u/f (correct)
-                if ((conditions to select v) ) (write the conditions)
-                    f<-v
-                endif
-            endfor
-       endfor
-      */
+    Calculator calc(graph, attribute);
+    calc.calculate();
     return 0;
 }
 
