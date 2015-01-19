@@ -108,6 +108,24 @@ int main()
 
 
     /**
+	
+	//esha
+	for first level_one take every node in graph
+	while level_one is not empty do
+		start with any node and extend (that node in DFS approach)
+			In extend function do
+				take it's neighbour from adjacency matrix,create pattern which is itemset of 2 items and make their neighbor list
+					check if they share 2 or more attribute in common
+						if not prune that itemset
+					if this string is seen already or subset of another max itemset
+					//	we'll keep the itemset we get finally as string in accending order,then we'll check if it is already seen or not
+						then prune
+					else if extend continues
+						take the maximal itemset in result set
+						keep count of total pruned brunchs
+						print elapse time 
+						
+	return 
       psudo code by esha
       for each node u
             create a forest forest f
