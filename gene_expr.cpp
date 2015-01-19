@@ -174,9 +174,51 @@ while level_one is not empty do
 return
 */
 
+class Forest
+{
+public:
+    vector<int> items;
+    string attribute;
+
+    Forest();
+    Forest(vector<int> itm, AttributeData &attrubte);
+    vector<int> getNeighbourList(AdjacencyMatrix &adjMatrix, AttributeData &attribute);
+};
+
+void mine(Forest f)
+{
+    vector<int> neighbourList = f.getNeighbourList();
+
+    for (int i=0; i<neighbourList.size(); i++)
+    {
+        int item = neighbourList[i];
+        if (matchAttribute(f, item)==false)
+        {
+            //discart it
+            continue;
+        }
+
+        if (exist(f, item)) //check in existing sequences
+        {
+            //discard it
+            continue;
+        }
+
+        merge(f, item);
+
+        mergedOne = true;
+    }
+
+    if (mergedOne==false) return ;
+    mine(f);
+}
+
 void Calculator::calculate()
 {
-
+    for (int item=1; item<=graph.numNodes; i++)
+    {
+        mine(Forest({i}));
+    }
 }
 
 int main()
