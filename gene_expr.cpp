@@ -99,6 +99,38 @@ GraphInputData GraphInputData::getData(string fileName)
     return input;
 }
 
+class GraphHelper
+{
+public:
+    static void             printAdjMatrix      (AdjacencyMatrix    adjMatrix);
+    static AdjacencyMatrix  createAdjMatrix     (EdgeList edges, int numNodes);
+};
+
+void GraphHelper::printAdjMatrix(AdjacencyMatrix adjMatrix)
+{
+    for (int i=1; i<adjMatrix.size(); i++) cout<<"\t"<<i;
+    cout<<endl;
+    for (int i=1; i<adjMatrix.size(); i++)
+    {
+        cout<<(i)<<"\t";
+        for (int j=1; j<adjMatrix[i].size(); j++) cout<<adjMatrix[i][j]<<"\t";
+        cout<<endl;
+    }
+
+}
+
+AdjacencyMatrix GraphHelper::createAdjMatrix(EdgeList edges, int numNodes)
+{
+    AdjacencyMatrix adjMatrix = AdjacencyMatrix (numNodes+1,vector<int>(numNodes+1));
+    for (int i=0; i<edges.size(); i++)
+    {
+        int nu=edges[i].first;
+        int nv=edges[i].second;
+        adjMatrix[nu][nv]=true;
+        adjMatrix[nv][nu]=true;
+    }
+    return adjMatrix;
+}
 
 int main()
 {
@@ -106,7 +138,9 @@ int main()
     AttributeData attribute = AttributeData::getAttributeData("attribute.txt");
     for (int i=0; i<attribute.attrs.size(); i++) cout<<attribute.attrs[i]<<endl;
 
-
+    cout<<graph.numNodes<<endl;
+    AdjacencyMatrix adjMatrix = GraphHelper::createAdjMatrix(graph.edges, graph.numNodes);
+    GraphHelper::printAdjMatrix(adjMatrix);
     /**
 	
 	//esha
