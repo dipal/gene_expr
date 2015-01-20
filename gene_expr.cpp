@@ -2,6 +2,8 @@
 #include <string>
 #include <vector>
 #include <fstream>
+#include <map>
+#include <set>
 
 using namespace std;
 
@@ -132,6 +134,42 @@ AdjacencyMatrix GraphHelper::createAdjMatrix(EdgeList edges, int numNodes)
     return adjMatrix;
 }
 
+class Forest
+{
+public:
+    vector<int> items;
+    Attribute attribute;
+
+    Forest(int item, Attribute attr);
+    vector<int> getNeighbourList(AdjacencyMatrix &adjMatrix);
+    static bool matchAttribute(Forest f, Attribute attr, int threshold);
+    static Forest merge(Forest f, int item, Attribute attr);
+};
+
+
+Forest::Forest(int item, Attribute attr)
+{
+    items.clear();
+    items.push_back(item);
+    attribute = attr;
+}
+
+vector<int> Forest::getNeighbourList(AdjacencyMatrix &adjMatrix)
+{
+    set<int> s;
+
+    return vector<int>(s.begin(),s.end());
+}
+
+bool Forest::matchAttribute(Forest f, Attribute attr, int threshold)
+{
+    return false;
+}
+
+Forest Forest::merge(Forest f, int item, Attribute attr)
+{
+
+}
 
 class Calculator
 {
@@ -139,16 +177,23 @@ public:
     GraphInputData graph;
     AttributeData attribute;
     AdjacencyMatrix adjMatrix;
+    int prunning;
+    vector<Forest> finalSequences;
+    int attributeThreshold;
 
-    Calculator(GraphInputData iGraph, AttributeData iAttr);
+    Calculator(GraphInputData iGraph, AttributeData iAttr, int iAttributeThreshold);
     void calculate();
+    void mine(Forest f);
+    bool alreadyTravarsed(Forest f);
+    bool isExist(Forest f);
 };
 
 
-Calculator::Calculator(GraphInputData iGraph, AttributeData iAttr)
+Calculator::Calculator(GraphInputData iGraph, AttributeData iAttr, int iAttributeThreshold)
 {
     graph = iGraph;
     attribute = iAttr;
+    attributeThreshold = iAttributeThreshold;
 
     adjMatrix = GraphHelper::createAdjMatrix(graph.edges, graph.numNodes);
 }
@@ -174,50 +219,63 @@ while level_one is not empty do
 return
 */
 
-class Forest
+
+bool Calculator::alreadyTravarsed(Forest f)
 {
-public:
-    vector<int> items;
-    string attribute;
+    return false;
+}
 
-    Forest();
-    Forest(vector<int> itm, AttributeData &attrubte);
-    vector<int> getNeighbourList(AdjacencyMatrix &adjMatrix, AttributeData &attribute);
-};
-
-void mine(Forest f)
+bool Calculator::isExist(Forest f)
 {
-    vector<int> neighbourList = f.getNeighbourList();
+    return true;
+}
 
+void Calculator::mine(Forest f)
+{
+    vector<int> neighbourList = f.getNeighbourList(adjMatrix);
+
+    bool foundOne = false;
     for (int i=0; i<neighbourList.size(); i++)
     {
         int item = neighbourList[i];
-        if (matchAttribute(f, item)==false)
-        {
-            //discart it
-            continue;
-        }
-
-        if (exist(f, item)) //check in existing sequences
+        if (Forest::matchAttribute(f, attribute.attrs[item], attributeThreshold)==false)
         {
             //discard it
+            prunning++;
             continue;
         }
 
-        merge(f, item);
+        Forest mergedForest = Forest::merge(f, item, attribute.attrs[item]);
+        if (alreadyTravarsed(mergedForest))
+        {
+            //discard it
+            prunning++;
+            continue;
+        }
 
-        mergedOne = true;
+        if (isExist(mergedForest)) //check in existing sequences
+        {
+            //discard it
+            prunning++;
+            continue;
+        }
+
+        foundOne=true;
+
+        mine(mergedForest);
     }
 
-    if (mergedOne==false) return ;
-    mine(f);
+    if (!foundOne)
+    {
+        finalSequences.push_back(f);
+    }
 }
 
 void Calculator::calculate()
 {
-    for (int item=1; item<=graph.numNodes; i++)
+    for (int item=1; item<=graph.numNodes; item++)
     {
-        mine(Forest({i}));
+        mine(Forest(item, attribute.attrs[item]));
     }
 }
 
@@ -226,8 +284,9 @@ int main()
     GraphInputData graph = GraphInputData::getData("graph.txt");
     AttributeData attribute = AttributeData::getAttributeData("attribute.txt");
 
-    Calculator calc(graph, attribute);
+    Calculator calc(graph, attribute, 2);
     calc.calculate();
     return 0;
 }
+
 
