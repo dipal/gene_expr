@@ -4,33 +4,33 @@
 #include <fstream>
 #include <map>
 #include <set>
+#include <sstream>
+#include <algorithm>
 
 using namespace std;
 
 typedef vector<vector<int> > AdjacencyMatrix;
+typedef vector<vector<int> > AdjacencyList;
 typedef vector<pair<int,int> > EdgeList;
 typedef string Attribute;
+
+//#define log(x) cout<<x<<endl;
+#define log(x)
 
 class AttributeData
 {
 public:
     vector<Attribute> attrs;
-    int numAttributes;
 
     AttributeData();
-    int matchedAttribute(int a, int b);
 
     static AttributeData getAttributeData(string fileName);
+    static int numAttributes(Attribute attr);
+    static bool matchAttribute(Attribute a, Attribute b, int threshold);
 };
 
 AttributeData::AttributeData()
 {
-    numAttributes=0;
-}
-
-int AttributeData::matchedAttribute(int a, int b)
-{
-    //todo
 }
 
 AttributeData AttributeData::getAttributeData(string fileName)
@@ -60,10 +60,16 @@ AttributeData AttributeData::getAttributeData(string fileName)
         attrData.attrs.push_back(a);
     }
 
-    attrData.numAttributes = numAttr;
     attrData.attrs[0] = string(numAttr,'0'); //reset dummy
 
     return attrData;
+}
+
+int AttributeData::numAttributes(Attribute attr)
+{
+    int sum=0;
+    for (int i=0; i<attr.size(); i++) sum+=attr[i]=='1';
+    return sum;
 }
 
 
@@ -106,6 +112,7 @@ class GraphHelper
 public:
     static void             printAdjMatrix      (AdjacencyMatrix    adjMatrix);
     static AdjacencyMatrix  createAdjMatrix     (EdgeList edges, int numNodes);
+    static AdjacencyList    createAdjList       (EdgeList edges, int numNodes);
 };
 
 void GraphHelper::printAdjMatrix(AdjacencyMatrix adjMatrix)
@@ -134,6 +141,19 @@ AdjacencyMatrix GraphHelper::createAdjMatrix(EdgeList edges, int numNodes)
     return adjMatrix;
 }
 
+AdjacencyList GraphHelper::createAdjList(EdgeList edges, int numNodes)
+{
+    AdjacencyList adjList = AdjacencyList (numNodes+1,vector<int>());
+    for (int i=0; i<edges.size(); i++)
+    {
+        int nu=edges[i].first;
+        int nv=edges[i].second;
+        adjList[nu].push_back(nv);
+        adjList[nv].push_back(nu);
+    }
+    return adjList;
+}
+
 class Forest
 {
 public:
@@ -141,9 +161,9 @@ public:
     Attribute attribute;
 
     Forest(int item, Attribute attr);
-    vector<int> getNeighbourList(AdjacencyMatrix &adjMatrix);
-    static bool matchAttribute(Forest f, Attribute attr, int threshold);
+    vector<int> getNeighbourList(AdjacencyList &adjList);
     static Forest merge(Forest f, int item, Attribute attr);
+    string toString();
 };
 
 
@@ -154,48 +174,101 @@ Forest::Forest(int item, Attribute attr)
     attribute = attr;
 }
 
-vector<int> Forest::getNeighbourList(AdjacencyMatrix &adjMatrix)
+vector<int> Forest::getNeighbourList(AdjacencyList &adjList)
 {
+    map<int,bool> inForest;
+    for (int i=0; i<items.size(); i++) inForest[items[i]]=true;
+
     set<int> s;
+    for (int i=0; i<items.size(); i++)
+    {
+        int item = items[i];
+        for (int j=0; j<adjList[item].size(); j++)
+        {
+            if (inForest[adjList[item][j]]) continue;
+            s.insert(adjList[item][j]);
+        }
+    }
 
     return vector<int>(s.begin(),s.end());
 }
 
-bool Forest::matchAttribute(Forest f, Attribute attr, int threshold)
+bool AttributeData::matchAttribute(Attribute a, Attribute b, int threshold)
 {
-    return false;
+    if (a.size()!=b.size()) cout<<"matchAttribute: size mismatch.";
+
+    int sum=0;
+    for (int i=0; i<a.size(); i++)
+    {
+        if (a[i]==b[i] && a[i]=='1') sum++;
+    }
+
+    return sum>=threshold;
 }
 
 Forest Forest::merge(Forest f, int item, Attribute attr)
 {
+    Forest mergedForest = f;
 
+    mergedForest.items.push_back(item);
+    sort(mergedForest.items.begin(), mergedForest.items.end());
+
+    if (mergedForest.attribute.size()!=attr.size()) cout<<"Error: Forest::merge() attribute size mismatch"<<endl;
+
+    for (int i=0; i<mergedForest.attribute.size(); i++)
+    {
+        if (attr[i]=='1' && mergedForest.attribute[i]=='1') mergedForest.attribute[i]='1';
+        else mergedForest.attribute[i]='0';
+    }
+
+    return mergedForest;
+}
+
+string Forest::toString()
+{
+    stringstream sout;
+    sout<<"{";
+    for (int i=0; i<items.size(); i++)
+    {
+        if (i) sout<<",";
+        sout<<items[i];
+    }
+    sout<<"}";
+
+    return sout.str();
 }
 
 class Calculator
 {
 public:
     GraphInputData graph;
-    AttributeData attribute;
+    AttributeData attributeData;
     AdjacencyMatrix adjMatrix;
+    AdjacencyList adjList;
     int prunning;
     vector<Forest> finalSequences;
     int attributeThreshold;
+
+    map<string,bool> visited;
 
     Calculator(GraphInputData iGraph, AttributeData iAttr, int iAttributeThreshold);
     void calculate();
     void mine(Forest f);
     bool alreadyTravarsed(Forest f);
-    bool isExist(Forest f);
+    void markTravarsed(Forest f);
+    bool isSeqExist(Forest f);
+    void printResult();
 };
 
 
 Calculator::Calculator(GraphInputData iGraph, AttributeData iAttr, int iAttributeThreshold)
 {
     graph = iGraph;
-    attribute = iAttr;
+    attributeData = iAttr;
     attributeThreshold = iAttributeThreshold;
 
     adjMatrix = GraphHelper::createAdjMatrix(graph.edges, graph.numNodes);
+    adjList = GraphHelper::createAdjList(graph.edges, graph.numNodes);
 }
 
 /**
@@ -222,30 +295,59 @@ return
 
 bool Calculator::alreadyTravarsed(Forest f)
 {
+    return visited[f.toString()];
+}
+
+void Calculator::markTravarsed(Forest f)
+{
+    visited[f.toString()] = true;
+}
+
+bool Calculator::isSeqExist(Forest f)
+{
+    vector<int> chk = f.items;
+    for (int i=0; i<finalSequences.size(); i++)
+    {
+        vector<int> seq = finalSequences[i].items;
+        int j=0,k=0;
+        while (j<chk.size() && k<seq.size())
+        {
+            if (chk[j]==seq[k]) j++,k++;
+            else k++;
+        }
+
+        if (j==chk.size()) return true;
+    }
+
     return false;
 }
 
-bool Calculator::isExist(Forest f)
-{
-    return true;
-}
-
+int safe=0;
 void Calculator::mine(Forest f)
 {
-    vector<int> neighbourList = f.getNeighbourList(adjMatrix);
+    safe++;
+    if (safe>100) return ;
 
-    bool foundOne = false;
+    log("visiting "<<f.toString());
+
+    vector<int> neighbourList = f.getNeighbourList(adjList);
+    //for (int i=0; i<neighbourList.size(); i++) cout<<neighbourList[i]<<" ";cout<<endl;
+    bool mergedOne = false;
+    visited[f.toString()] = true;
     for (int i=0; i<neighbourList.size(); i++)
     {
         int item = neighbourList[i];
-        if (Forest::matchAttribute(f, attribute.attrs[item], attributeThreshold)==false)
+
+        log("   checking neighbour "<<item<<" "<<i<<" "<<neighbourList.size());
+
+        if (AttributeData::matchAttribute(f.attribute, attributeData.attrs[item], attributeThreshold)==false)
         {
             //discard it
             prunning++;
             continue;
         }
 
-        Forest mergedForest = Forest::merge(f, item, attribute.attrs[item]);
+        Forest mergedForest = Forest::merge(f, item, attributeData.attrs[item]);
         if (alreadyTravarsed(mergedForest))
         {
             //discard it
@@ -253,29 +355,45 @@ void Calculator::mine(Forest f)
             continue;
         }
 
-        if (isExist(mergedForest)) //check in existing sequences
+        if (isSeqExist(mergedForest)) //check in existing sequences
         {
-            //discard it
-            prunning++;
-            continue;
+            if ( AttributeData::numAttributes(f.attribute) >= AttributeData::numAttributes(attributeData.attrs[item]))
+            {
+                //discard it
+                prunning++;
+                continue;
+            }
         }
 
-        foundOne=true;
+        mergedOne=true;
 
         mine(mergedForest);
     }
 
-    if (!foundOne)
+    if (!mergedOne)
     {
         finalSequences.push_back(f);
+        log("merging sequence "<<f.toString());
     }
+
+    log("completed visiting "<<f.toString());
 }
 
 void Calculator::calculate()
 {
     for (int item=1; item<=graph.numNodes; item++)
     {
-        mine(Forest(item, attribute.attrs[item]));
+        mine(Forest(item, attributeData.attrs[item]));
+    }
+}
+
+void Calculator::printResult()
+{
+    cout<<"Total "<<finalSequences.size()<<" sequences found"<<endl;
+    for (int i=0; i<finalSequences.size(); i++)
+    {
+        cout<<"\t Item Set : "<<finalSequences[i].toString()<<endl;
+        cout<<"\t\t"<<" Attribute : "<<finalSequences[i].attribute<<endl;
     }
 }
 
@@ -286,6 +404,7 @@ int main()
 
     Calculator calc(graph, attribute, 2);
     calc.calculate();
+    calc.printResult();
     return 0;
 }
 
