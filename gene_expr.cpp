@@ -256,7 +256,7 @@ public:
     void mine(Forest f);
     bool alreadyTravarsed(Forest f);
     void markTravarsed(Forest f);
-    bool isSeqExist(Forest f);
+    bool isSeqExist(Forest f, bool compareAttribute = false);
     void printResult();
 };
 
@@ -303,7 +303,7 @@ void Calculator::markTravarsed(Forest f)
     visited[f.toString()] = true;
 }
 
-bool Calculator::isSeqExist(Forest f)
+bool Calculator::isSeqExist(Forest f, bool compareAttribute)
 {
     vector<int> chk = f.items;
     for (int i=0; i<finalSequences.size(); i++)
@@ -316,11 +316,22 @@ bool Calculator::isSeqExist(Forest f)
             else k++;
         }
 
-        if (j==chk.size()) return true;
+        if (j==chk.size())
+        {
+            if (compareAttribute)
+            {
+                if (finalSequences[i].attribute==f.attribute) return true;
+            }
+            else
+            {
+                return true;
+            }
+        }
     }
 
     return false;
 }
+
 
 int safe=0;
 void Calculator::mine(Forest f)
@@ -372,7 +383,10 @@ void Calculator::mine(Forest f)
 
     if (!mergedOne)
     {
-        finalSequences.push_back(f);
+        if (!isSeqExist(f, true) && f.items.size()>1)
+        {
+            finalSequences.push_back(f);
+        }
         log("merging sequence "<<f.toString());
     }
 
