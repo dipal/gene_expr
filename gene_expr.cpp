@@ -368,7 +368,7 @@ void Calculator::mine(Forest f)
             continue;
         }
 
-        if (isSeqExist(mergedForest)) //check in existing sequences
+        /*if (isSeqExist(mergedForest)) //check in existing sequences
         {
             if ( AttributeData::numAttributes(f.attribute) >= AttributeData::numAttributes(attributeData.attrs[item]))
             {
@@ -377,7 +377,7 @@ void Calculator::mine(Forest f)
                 prunning++;
                 continue;
             }
-        }
+        }*/
 
         mergedOne=true;
 
