@@ -14,7 +14,7 @@ typedef vector<vector<int> > AdjacencyList;
 typedef vector<pair<int,int> > EdgeList;
 typedef string Attribute;
 
-//#define log(x) cout<<x<<endl;
+#define log(x) cout<<x<<endl;
 #define log(x)
 
 class AttributeData
@@ -48,7 +48,7 @@ AttributeData AttributeData::getAttributeData(string fileName)
     while(attrFile>>a)
     {
         save++;
-        if (save>100) break;
+        if (save>100000) break;
         node++;
         if (node==1) numAttr = a.size();
         if (a.size()<numAttr)
@@ -99,7 +99,7 @@ GraphInputData GraphInputData::getData(string fileName)
     while(graphFile>>u>>v)
     {
         save++;
-        if (save>100) break;
+        if (save>1000000) break;
         input.numNodes=max(input.numNodes,max(u,v));
         input.edges.push_back(make_pair(u,v));
     }
@@ -337,7 +337,7 @@ int safe=0;
 void Calculator::mine(Forest f)
 {
     safe++;
-    if (safe>100) return ;
+    if (safe>10000) return ;
 
     log("visiting "<<f.toString());
 
@@ -354,6 +354,7 @@ void Calculator::mine(Forest f)
         if (AttributeData::matchAttribute(f.attribute, attributeData.attrs[item], attributeThreshold)==false)
         {
             //discard it
+            log("prunning for attribute "<<f.attribute<<" "<<attributeData.attrs[item]);
             prunning++;
             continue;
         }
@@ -362,6 +363,7 @@ void Calculator::mine(Forest f)
         if (alreadyTravarsed(mergedForest))
         {
             //discard it
+            log("prunning "<<mergedForest.toString()<<" for alread traversed");
             prunning++;
             continue;
         }
@@ -371,6 +373,7 @@ void Calculator::mine(Forest f)
             if ( AttributeData::numAttributes(f.attribute) >= AttributeData::numAttributes(attributeData.attrs[item]))
             {
                 //discard it
+                log("sub sequence exists");
                 prunning++;
                 continue;
             }
@@ -413,8 +416,8 @@ void Calculator::printResult()
 
 int main()
 {
-    GraphInputData graph = GraphInputData::getData("graph.txt");
-    AttributeData attribute = AttributeData::getAttributeData("attribute.txt");
+    GraphInputData graph = GraphInputData::getData("HcNetwork.txt");
+    AttributeData attribute = AttributeData::getAttributeData("HcAttrib01.txt");
 
     Calculator calc(graph, attribute, 2);
     calc.calculate();
