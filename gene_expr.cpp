@@ -227,13 +227,13 @@ Forest Forest::merge(Forest f, int item, Attribute attr)
 string Forest::toString()
 {
     stringstream sout;
-    sout<<"{";
+    sout<<"[";
     for (int i=0; i<items.size(); i++)
     {
-        if (i) sout<<",";
+        if (i) sout<<", ";
         sout<<items[i];
     }
-    sout<<"}";
+    sout<<"]";
 
     return sout.str();
 }
@@ -337,7 +337,7 @@ int safe=0;
 void Calculator::mine(Forest f)
 {
     safe++;
-    if (safe>10000) return ;
+    if (safe>10000000) return ;
 
     log("visiting "<<f.toString());
 
@@ -386,7 +386,7 @@ void Calculator::mine(Forest f)
 
     if (!mergedOne)
     {
-        if (!isSeqExist(f, true) && f.items.size()>1)
+        if (!isSeqExist(f, false) && f.items.size()>1)
         {
             finalSequences.push_back(f);
         }
@@ -406,16 +406,18 @@ void Calculator::calculate()
 
 void Calculator::printResult()
 {
-    cout<<"Total "<<finalSequences.size()<<" sequences found"<<endl;
     for (int i=0; i<finalSequences.size(); i++)
     {
-        cout<<"\t Item Set : "<<finalSequences[i].toString()<<endl;
-        cout<<"\t\t"<<" Attribute : "<<finalSequences[i].attribute<<endl;
+        //cout<<"\t Item Set : "<<finalSequences[i].toString()<<endl;
+        //cout<<finalSequences[i].items.size()<<endl;
+        //cout<<"\t\t"<<" Attribute : "<<finalSequences[i].attribute<<endl;
+        cout<<finalSequences[i].toString()<<endl;
     }
 }
 
 int main()
 {
+    freopen("out.txt","w",stdout);
     GraphInputData graph = GraphInputData::getData("HcNetwork.txt");
     AttributeData attribute = AttributeData::getAttributeData("HcAttrib01.txt");
 
