@@ -12,7 +12,7 @@ using namespace std;
 typedef vector<vector<int> > AdjacencyMatrix;
 typedef vector<vector<int> > AdjacencyList;
 typedef vector<pair<int,int> > EdgeList;
-typedef string Attribute;
+typedef vector<double> Attribute;
 
 #define log(x) cout<<x<<endl;
 #define log(x)
@@ -39,17 +39,24 @@ AttributeData AttributeData::getAttributeData(string fileName)
 
     AttributeData attrData;
 
-    attrData.attrs.push_back("");//dummy attribute for index 0
+    attrData.attrs.push_back(vector<double>());//dummy attribute for index 0
 
-    Attribute a;
     int save=0;
     int node=0;
     int numAttr=0;
-    while(attrFile>>a)
+    string line;
+    while(getline(attrFile, line))
     {
         save++;
         if (save>100000) break;
         node++;
+        stringstream sin(line);
+        Attribute a;
+        double val;
+        while (sin>>val)
+        {
+            a.push_back(val);
+        }
         if (node==1) numAttr = a.size();
         if (a.size()<numAttr)
         {
@@ -60,7 +67,7 @@ AttributeData AttributeData::getAttributeData(string fileName)
         attrData.attrs.push_back(a);
     }
 
-    attrData.attrs[0] = string(numAttr,'0'); //reset dummy
+    attrData.attrs[0] = vector<double>(numAttr,0); //reset dummy
 
     return attrData;
 }
@@ -417,13 +424,13 @@ void Calculator::printResult()
 
 int main()
 {
-    freopen("out.txt","w",stdout);
-    GraphInputData graph = GraphInputData::getData("HcNetwork.txt");
-    AttributeData attribute = AttributeData::getAttributeData("HcAttrib01.txt");
+    //freopen("out.txt","w",stdout);
+    GraphInputData graph = GraphInputData::getData("network.txt");
+    AttributeData attribute = AttributeData::getAttributeData("attrs.txt");
 
-    Calculator calc(graph, attribute, 2);
-    calc.calculate();
-    calc.printResult();
+    //Calculator calc(graph, attribute, 2);
+    //calc.calculate();
+    //calc.printResult();
     return 0;
 }
 
