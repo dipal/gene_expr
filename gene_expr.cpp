@@ -17,11 +17,9 @@ using namespace std;
 int main()
 {
     //freopen("out.txt","w",stdout);
-    cout<<"running"<<endl;
-    GraphInputData graph = GraphInputData::getData("network.txt");
-    AttributeData attribute = AttributeData::getAttributeData("attrs.txt");
+    GraphInputData graph = GraphInputData::getData("small_attr_graph.txt");
+    AttributeData attribute = AttributeData::getAttributeData("small_attribute.txt");
 
-    cout<<graph.numNodes<<endl;
     Calculator calc(graph, attribute, 0.3, 2);
     calc.calculate();
     calc.printResult();

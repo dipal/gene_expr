@@ -135,7 +135,7 @@ void Calculator::mine(Forest f)
     {
         if (!isSeqExist(f, false) && f.items.size()>1)
         {
-            cout<<"found one"<<endl;
+            //cout<<"found one"<<endl;
             finalSequences.push_back(f);
             log("merging sequence "<<f.toString());
         }
