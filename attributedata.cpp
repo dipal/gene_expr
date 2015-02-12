@@ -2,6 +2,7 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
+//#include <cmath>
 
 AttributeData::AttributeData()
 {
@@ -22,7 +23,7 @@ AttributeData AttributeData::getAttributeData(string fileName)
     while(getline(attrFile, line))
     {
         save++;
-        if (save>100000) break;
+        if (save>10000000) break;
         node++;
         stringstream sin(line);
         Attribute a;
@@ -42,26 +43,7 @@ AttributeData AttributeData::getAttributeData(string fileName)
     }
 
     attrData.attrs[0] = vector<double>(numAttr,0); //reset dummy
+    attrData.numAttributes = numAttr;
 
     return attrData;
-}
-
-int AttributeData::numAttributes(Attribute attr)
-{
-    int sum=0;
-    for (int i=0; i<attr.size(); i++) sum+=attr[i]=='1';
-    return sum;
-}
-
-bool AttributeData::matchAttribute(Attribute a, Attribute b, int threshold)
-{
-    if (a.size()!=b.size()) cout<<"matchAttribute: size mismatch.";
-
-    int sum=0;
-    for (int i=0; i<a.size(); i++)
-    {
-        if (a[i]==b[i] && a[i]=='1') sum++;
-    }
-
-    return sum>=threshold;
 }

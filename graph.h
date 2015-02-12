@@ -2,8 +2,6 @@
 #define GRAPH_H
 
 #include <vector>
-#include <string>
-#include <map>
 
 using namespace std;
 

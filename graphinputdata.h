@@ -2,6 +2,7 @@
 #define GRAPHINPUTDATA_H
 
 #include "graph.h"
+#include <string>
 
 class GraphInputData
 {
@@ -14,3 +15,4 @@ public:
 };
 
 #endif // GRAPHINPUTDATA_H
+

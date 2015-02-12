@@ -12,3 +12,4 @@ public:
 };
 
 #endif // GRAPHHELPER_H
+

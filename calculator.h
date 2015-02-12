@@ -2,21 +2,10 @@
 #define CALCULATOR_H
 
 #include "graph.h"
+#include "forest.h"
 #include "graphinputdata.h"
-#include "attributedata.h"
-
-class Forest
-{
-public:
-    vector<int> items;
-    Attribute attribute;
-
-    Forest(int item, Attribute attr);
-    vector<int> getNeighbourList(AdjacencyList &adjList);
-    static Forest merge(Forest f, int item, Attribute attr);
-    string toString();
-};
-
+//#include "attributedata.h"
+#include <map>
 
 class Calculator
 {
@@ -27,11 +16,12 @@ public:
     AdjacencyList adjList;
     int prunning;
     vector<Forest> finalSequences;
-    int attributeThreshold;
+    double threshold;
+    int minMatch;
 
     map<string,bool> visited;
 
-    Calculator(GraphInputData iGraph, AttributeData iAttr, int iAttributeThreshold);
+    Calculator(GraphInputData iGraph, AttributeData iAttr, double iAttributeThreshold, int iMinMatch);
     void calculate();
     void mine(Forest f);
     bool alreadyTravarsed(Forest f);
@@ -41,3 +31,4 @@ public:
 };
 
 #endif // CALCULATOR_H
+

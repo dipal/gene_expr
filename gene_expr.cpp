@@ -6,10 +6,10 @@
 #include <set>
 #include <sstream>
 #include <algorithm>
-#include "graph.h"
-#include "attributedata.h"
 #include "graphinputdata.h"
+#include "attributedata.h"
 #include "graphhelper.h"
+#include "calculator.h"
 
 using namespace std;
 
@@ -17,12 +17,14 @@ using namespace std;
 int main()
 {
     //freopen("out.txt","w",stdout);
+    cout<<"running"<<endl;
     GraphInputData graph = GraphInputData::getData("network.txt");
     AttributeData attribute = AttributeData::getAttributeData("attrs.txt");
 
-    //Calculator calc(graph, attribute, 2);
-    //calc.calculate();
-    //calc.printResult();
+    cout<<graph.numNodes<<endl;
+    Calculator calc(graph, attribute, 0.3, 2);
+    calc.calculate();
+    calc.printResult();
     return 0;
 }
 

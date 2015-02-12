@@ -1,5 +1,5 @@
 #include "graphinputdata.h"
-#include "fstream"
+#include <fstream>
 
 GraphInputData::GraphInputData()
 {
@@ -17,11 +17,12 @@ GraphInputData GraphInputData::getData(string fileName)
     while(graphFile>>u>>v)
     {
         save++;
-        if (save>1000000) break;
+        if (save>1000000000) break;
         input.numNodes=max(input.numNodes,max(u,v));
         input.edges.push_back(make_pair(u,v));
     }
 
     return input;
 }
+
 

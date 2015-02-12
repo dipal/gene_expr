@@ -39,3 +39,4 @@ AdjacencyList GraphHelper::createAdjList(EdgeList edges, int numNodes)
     }
     return adjList;
 }
+

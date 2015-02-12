@@ -1,79 +1,15 @@
 #include "calculator.h"
+#include "graphhelper.h"
 #include <iostream>
 #include <sstream>
-#include <set>
-#include <algorithm>
-#include <graphhelper.h>
+#include "debug.h"
 
-#define log(x) cout<<x<<endl;
-#define log(x)
-
-
-Forest::Forest(int item, Attribute attr)
-{
-    items.clear();
-    items.push_back(item);
-    attribute = attr;
-}
-
-vector<int> Forest::getNeighbourList(AdjacencyList &adjList)
-{
-    map<int,bool> inForest;
-    for (int i=0; i<items.size(); i++) inForest[items[i]]=true;
-
-    set<int> s;
-    for (int i=0; i<items.size(); i++)
-    {
-        int item = items[i];
-        for (int j=0; j<adjList[item].size(); j++)
-        {
-            if (inForest[adjList[item][j]]) continue;
-            s.insert(adjList[item][j]);
-        }
-    }
-
-    return vector<int>(s.begin(),s.end());
-}
-
-Forest Forest::merge(Forest f, int item, Attribute attr)
-{
-    Forest mergedForest = f;
-
-    mergedForest.items.push_back(item);
-    sort(mergedForest.items.begin(), mergedForest.items.end());
-
-    if (mergedForest.attribute.size()!=attr.size()) cout<<"Error: Forest::merge() attribute size mismatch"<<endl;
-
-    for (int i=0; i<mergedForest.attribute.size(); i++)
-    {
-        if (attr[i]=='1' && mergedForest.attribute[i]=='1') mergedForest.attribute[i]='1';
-        else mergedForest.attribute[i]='0';
-    }
-
-    return mergedForest;
-}
-
-string Forest::toString()
-{
-    stringstream sout;
-    sout<<"[";
-    for (int i=0; i<items.size(); i++)
-    {
-        if (i) sout<<", ";
-        sout<<items[i];
-    }
-    sout<<"]";
-
-    return sout.str();
-}
-
-
-
-Calculator::Calculator(GraphInputData iGraph, AttributeData iAttr, int iAttributeThreshold)
+Calculator::Calculator(GraphInputData iGraph, AttributeData iAttr, double iAttributeThreshold, int iMinMatch)
 {
     graph = iGraph;
     attributeData = iAttr;
-    attributeThreshold = iAttributeThreshold;
+    threshold = iAttributeThreshold+1e-6;
+    minMatch = iMinMatch;
 
     adjMatrix = GraphHelper::createAdjMatrix(graph.edges, graph.numNodes);
     adjList = GraphHelper::createAdjList(graph.edges, graph.numNodes);
@@ -126,14 +62,15 @@ bool Calculator::isSeqExist(Forest f, bool compareAttribute)
 
         if (j==chk.size())
         {
-            if (compareAttribute)
+            /*if (compareAttribute)
             {
                 if (finalSequences[i].attribute==f.attribute) return true;
             }
             else
             {
                 return true;
-            }
+            }*/
+            return true;
         }
     }
 
@@ -145,9 +82,10 @@ int safe=0;
 void Calculator::mine(Forest f)
 {
     safe++;
-    if (safe>10000000) return ;
+    if (safe%1000==0) cout<<safe<<" calls"<<endl;
+    if (safe>1000000) return ;
 
-    log("visiting "<<f.toString());
+    log("visiting "<<f.toString()<<" : "<<f.attrToString());
 
     vector<int> neighbourList = f.getNeighbourList(adjList);
     //for (int i=0; i<neighbourList.size(); i++) cout<<neighbourList[i]<<" ";cout<<endl;
@@ -157,17 +95,18 @@ void Calculator::mine(Forest f)
     {
         int item = neighbourList[i];
 
-        log("   checking neighbour "<<item<<" "<<i<<" "<<neighbourList.size());
+        stringstream sin; for (int i=0; i<neighbourList.size(); i++) sin<<neighbourList[i]<<" ";
+        log("   checking neighbour "<<item<<" "<<sin.str()<<" of "<<f.toString());
 
-        if (AttributeData::matchAttribute(f.attribute, attributeData.attrs[item], attributeThreshold)==false)
+        if (Forest::matchAttribute(f, item, threshold, minMatch, attributeData)==false)
         {
             //discard it
-            log("prunning for attribute "<<f.attribute<<" "<<attributeData.attrs[item]);
+            log("       prunning for attribute ");
             prunning++;
             continue;
         }
 
-        Forest mergedForest = Forest::merge(f, item, attributeData.attrs[item]);
+        Forest mergedForest = Forest::merge(f, item, threshold, attributeData);
         if (alreadyTravarsed(mergedForest))
         {
             //discard it
@@ -196,9 +135,10 @@ void Calculator::mine(Forest f)
     {
         if (!isSeqExist(f, false) && f.items.size()>1)
         {
+            cout<<"found one"<<endl;
             finalSequences.push_back(f);
+            log("merging sequence "<<f.toString());
         }
-        log("merging sequence "<<f.toString());
     }
 
     log("completed visiting "<<f.toString());
@@ -208,7 +148,7 @@ void Calculator::calculate()
 {
     for (int item=1; item<=graph.numNodes; item++)
     {
-        mine(Forest(item, attributeData.attrs[item]));
+        mine(Forest(item, attributeData.numAttributes));
     }
 }
 
