@@ -146,7 +146,7 @@ void Calculator::mine(Forest f)
 
 void Calculator::calculate()
 {
-    for (int item=1; item<=graph.numNodes; item++)
+    for (int item=0; item<graph.numNodes; item++)
     {
         mine(Forest(item, attributeData.numAttributes));
     }

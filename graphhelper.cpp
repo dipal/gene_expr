@@ -3,12 +3,12 @@
 
 void GraphHelper::printAdjMatrix(AdjacencyMatrix adjMatrix)
 {
-    for (int i=1; i<adjMatrix.size(); i++) cout<<"\t"<<i;
+    for (int i=0; i<adjMatrix.size(); i++) cout<<"\t"<<i;
     cout<<endl;
-    for (int i=1; i<adjMatrix.size(); i++)
+    for (int i=0; i<adjMatrix.size(); i++)
     {
         cout<<(i)<<"\t";
-        for (int j=1; j<adjMatrix[i].size(); j++) cout<<adjMatrix[i][j]<<"\t";
+        for (int j=0; j<adjMatrix[i].size(); j++) cout<<adjMatrix[i][j]<<"\t";
         cout<<endl;
     }
 
@@ -16,7 +16,7 @@ void GraphHelper::printAdjMatrix(AdjacencyMatrix adjMatrix)
 
 AdjacencyMatrix GraphHelper::createAdjMatrix(EdgeList edges, int numNodes)
 {
-    AdjacencyMatrix adjMatrix = AdjacencyMatrix (numNodes+1,vector<int>(numNodes+1));
+    AdjacencyMatrix adjMatrix = AdjacencyMatrix (numNodes,vector<int>(numNodes));
     for (int i=0; i<edges.size(); i++)
     {
         int nu=edges[i].first;
@@ -29,7 +29,7 @@ AdjacencyMatrix GraphHelper::createAdjMatrix(EdgeList edges, int numNodes)
 
 AdjacencyList GraphHelper::createAdjList(EdgeList edges, int numNodes)
 {
-    AdjacencyList adjList = AdjacencyList (numNodes+1,vector<int>());
+    AdjacencyList adjList = AdjacencyList (numNodes,vector<int>());
     for (int i=0; i<edges.size(); i++)
     {
         int nu=edges[i].first;

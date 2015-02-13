@@ -20,6 +20,7 @@ int main()
     GraphInputData graph = GraphInputData::getData("small_attr_graph.txt");
     AttributeData attribute = AttributeData::getAttributeData("small_attribute.txt");
 
+
     Calculator calc(graph, attribute, 0.3, 2);
     calc.calculate();
     calc.printResult();

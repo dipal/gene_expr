@@ -1,5 +1,6 @@
 #include "graphinputdata.h"
 #include <fstream>
+#include <iostream>
 
 GraphInputData::GraphInputData()
 {
@@ -22,6 +23,7 @@ GraphInputData GraphInputData::getData(string fileName)
         input.edges.push_back(make_pair(u,v));
     }
 
+    input.numNodes++; //because nodes are 0 indexed
     return input;
 }
 
