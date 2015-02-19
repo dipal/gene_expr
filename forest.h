@@ -11,7 +11,7 @@ public:
 
     Forest(int item, int numOfAttribute);
     vector<int> getNeighbourList(AdjacencyList &adjList);
-    static Forest merge(Forest f, int item, double threshold, AttributeData &attrData);
+    static Forest merge(Forest f, int item, double threshold, int minMatch, AttributeData &attrData);
     static bool matchAttribute(Forest f, int item, double threshold, int minMatch, AttributeData &attrData);
     string toString();
     string attrToString();

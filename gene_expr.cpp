@@ -16,12 +16,16 @@ using namespace std;
 
 int main()
 {
-    //freopen("out.txt","w",stdout);
-    GraphInputData graph = GraphInputData::getData("small_attr_graph.txt");
-    AttributeData attribute = AttributeData::getAttributeData("small_attribute.txt");
+    freopen("out.txt","w",stdout);
+    GraphInputData graph = GraphInputData::getData("network.txt");
+    AttributeData attribute = AttributeData::getAttributeData("attrs.txt");
 
 
-    Calculator calc(graph, attribute, 0.3, 2);
+    for (int i=0; i<attribute.attrs.size(); i++)
+    {
+        //for (int j=0; j<attribute.numAttributes; j++) cout<<attribute.attrs[i][j]<<" "; cout<<endl;
+    }
+    Calculator calc(graph, attribute, 0.3, 60);
     calc.calculate();
     calc.printResult();
     return 0;

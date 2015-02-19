@@ -82,7 +82,7 @@ int safe=0;
 void Calculator::mine(Forest f)
 {
     safe++;
-    if (safe%1000==0) cout<<safe<<" calls"<<endl;
+    //if (safe%1000==0) cout<<safe<<" calls"<<endl;
     if (safe>1000000) return ;
 
     log("visiting "<<f.toString()<<" : "<<f.attrToString());
@@ -106,7 +106,7 @@ void Calculator::mine(Forest f)
             continue;
         }
 
-        Forest mergedForest = Forest::merge(f, item, threshold, attributeData);
+        Forest mergedForest = Forest::merge(f, item, threshold, minMatch, attributeData);
         if (alreadyTravarsed(mergedForest))
         {
             //discard it
@@ -133,7 +133,7 @@ void Calculator::mine(Forest f)
 
     if (!mergedOne)
     {
-        if (!isSeqExist(f, false) && f.items.size()>1)
+        if (!isSeqExist(f, false) && f.items.size()>=4)
         {
             //cout<<"found one"<<endl;
             finalSequences.push_back(f);
@@ -148,6 +148,7 @@ void Calculator::calculate()
 {
     for (int item=0; item<graph.numNodes; item++)
     {
+        //int item=45;
         mine(Forest(item, attributeData.numAttributes));
     }
 }

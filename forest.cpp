@@ -32,7 +32,7 @@ vector<int> Forest::getNeighbourList(AdjacencyList &adjList)
     return vector<int>(s.begin(),s.end());
 }
 
-Forest Forest::merge(Forest f, int item, double threshold, AttributeData &attrData)
+Forest Forest::merge(Forest f, int item, double threshold, int minMatch, AttributeData &attrData)
 {
     Forest mergedForest = f;
 
@@ -42,18 +42,19 @@ Forest Forest::merge(Forest f, int item, double threshold, AttributeData &attrDa
     int numAttributes = attrData.numAttributes;
     for (int i=0; i<numAttributes; i++)
     {
-        if (!f.usedAttribtues[i]) continue;
-        bool match = false;
+        //if (!f.usedAttribtues[i]) continue;
+
+        int cnt=0;
         for (int j=0; j<f.items.size(); j++)
         {
-            if (fabs(attrData.attrs[f.items[j]][i]-attrData.attrs[item][i])<=threshold)
+            if (islessequal(fabs(attrData.attrs[f.items[j]][i]-attrData.attrs[item][i]), threshold))
             {
-                match = true;
-                break;
+                cnt++;
             }
         }
 
-        mergedForest.usedAttribtues[i] = match;
+        //if (cnt==f.items.size()) mergedForest.usedAttribtues[i] = true;
+        //else mergedForest.usedAttribtues[i] = false;
     }
 
     return mergedForest;
@@ -90,20 +91,22 @@ bool Forest::matchAttribute(Forest f, int item, double threshold, int minMatch, 
     int match=0;
     for (int i=0; i<numAttributes; i++)
     {
-        if (!f.usedAttribtues[i]) continue;
+        //if (!f.usedAttribtues[i]) continue;
         int cnt=0;
         for (int j=0; j<f.items.size(); j++)
         {
 
-            //log("       "<<attrData.attrs[f.items[j]][i]<<"\t"<<attrData.attrs[item][i]<<" \t"<<fabs(attrData.attrs[f.items[j]][i]-attrData.attrs[item][i])<<" "<<isless(fabs(attrData.attrs[f.items[j]][i]-attrData.attrs[item][i]), threshold));
+            if (item==537)
+                log("       "<<attrData.attrs[f.items[j]][i]<<"\t\t"<<attrData.attrs[item][i]<<"\t\t"<<fabs(attrData.attrs[f.items[j]][i]-attrData.attrs[item][i])<<" "<<isless(fabs(attrData.attrs[f.items[j]][i]-attrData.attrs[item][i]), threshold));
             if (islessequal(fabs(attrData.attrs[f.items[j]][i]-attrData.attrs[item][i]), threshold))
             {
                 cnt++;
             }
         }
-
+        if (item==537)
+            log("got count "<<cnt<<" "<<f.items.size());
         if (cnt==f.items.size()) match++;
     }
-    //log("               "<<match<<" "<<minMatch);
+    log("               "<<match<<" "<<minMatch);
     return match>=minMatch;
 }
