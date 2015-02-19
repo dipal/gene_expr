@@ -69,7 +69,7 @@ string Forest::toString()
         if (i) sout<<", ";
         sout<<items[i];
     }
-    sout<<"]";
+    sout<<"] "<<items.size();
 
     return sout.str();
 }
@@ -96,15 +96,11 @@ bool Forest::matchAttribute(Forest f, int item, double threshold, int minMatch, 
         for (int j=0; j<f.items.size(); j++)
         {
 
-            //if (item==537)
-            //    log("       "<<attrData.attrs[f.items[j]][i]<<"\t\t"<<attrData.attrs[item][i]<<"\t\t"<<fabs(attrData.attrs[f.items[j]][i]-attrData.attrs[item][i])<<" "<<isless(fabs(attrData.attrs[f.items[j]][i]-attrData.attrs[item][i]), threshold));
             if (islessequal(fabs(attrData.attrs[f.items[j]][i]-attrData.attrs[item][i]), threshold))
             {
                 cnt++;
             }
         }
-        //if (item==537)
-        //    log("got count "<<cnt<<" "<<f.items.size());
         if (cnt==f.items.size()) match++;
     }
     log("               "<<match<<" "<<minMatch);

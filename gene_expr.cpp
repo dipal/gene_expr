@@ -20,12 +20,7 @@ int main()
     GraphInputData graph = GraphInputData::getData("network.txt");
     AttributeData attribute = AttributeData::getAttributeData("attrs.txt");
 
-
-    for (int i=0; i<attribute.attrs.size(); i++)
-    {
-        //for (int j=0; j<attribute.numAttributes; j++) cout<<attribute.attrs[i][j]<<" "; cout<<endl;
-    }
-    Calculator calc(graph, attribute, 0.3, 70);
+    Calculator calc(graph, attribute, 0.3, 100);
     calc.calculate();
     calc.printResult();
     return 0;

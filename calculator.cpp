@@ -78,25 +78,17 @@ bool Calculator::isSeqExist(Forest f, bool compareAttribute)
 }
 
 
-int safe=0;
 void Calculator::mine(Forest f)
 {
-    safe++;
-    //if (safe%1000==0) cout<<safe<<" calls"<<endl;
-    //if (safe>1000000) return ;
-
     log("visiting "<<f.toString()<<" : "<<f.attrToString());
 
     vector<int> neighbourList = f.getNeighbourList(adjList);
-    //for (int i=0; i<neighbourList.size(); i++) cout<<neighbourList[i]<<" ";cout<<endl;
+
     bool mergedOne = false;
     visited[f.toString()] = true;
     for (int i=0; i<neighbourList.size(); i++)
     {
         int item = neighbourList[i];
-
-        //stringstream sin; for (int i=0; i<neighbourList.size(); i++) sin<<neighbourList[i]<<" ";
-        //log("   checking neighbour "<<item<<" "<<sin.str()<<" of "<<f.toString());
 
         if (Forest::matchAttribute(f, item, threshold, minMatch, attributeData)==false)
         {
@@ -155,11 +147,9 @@ void Calculator::calculate()
 
 void Calculator::printResult()
 {
+    cout<<"Total found sequences "<<finalSequences.size()<<endl;
     for (int i=0; i<finalSequences.size(); i++)
     {
-        //cout<<"\t Item Set : "<<finalSequences[i].toString()<<endl;
-        //cout<<finalSequences[i].items.size()<<endl;
-        //cout<<"\t\t"<<" Attribute : "<<finalSequences[i].attribute<<endl;
         cout<<finalSequences[i].toString()<<endl;
     }
 }
