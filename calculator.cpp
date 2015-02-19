@@ -83,7 +83,7 @@ void Calculator::mine(Forest f)
 {
     safe++;
     //if (safe%1000==0) cout<<safe<<" calls"<<endl;
-    if (safe>1000000) return ;
+    //if (safe>1000000) return ;
 
     log("visiting "<<f.toString()<<" : "<<f.attrToString());
 
@@ -95,8 +95,8 @@ void Calculator::mine(Forest f)
     {
         int item = neighbourList[i];
 
-        stringstream sin; for (int i=0; i<neighbourList.size(); i++) sin<<neighbourList[i]<<" ";
-        log("   checking neighbour "<<item<<" "<<sin.str()<<" of "<<f.toString());
+        //stringstream sin; for (int i=0; i<neighbourList.size(); i++) sin<<neighbourList[i]<<" ";
+        //log("   checking neighbour "<<item<<" "<<sin.str()<<" of "<<f.toString());
 
         if (Forest::matchAttribute(f, item, threshold, minMatch, attributeData)==false)
         {

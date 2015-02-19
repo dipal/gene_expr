@@ -25,7 +25,7 @@ int main()
     {
         //for (int j=0; j<attribute.numAttributes; j++) cout<<attribute.attrs[i][j]<<" "; cout<<endl;
     }
-    Calculator calc(graph, attribute, 0.3, 60);
+    Calculator calc(graph, attribute, 0.3, 70);
     calc.calculate();
     calc.printResult();
     return 0;

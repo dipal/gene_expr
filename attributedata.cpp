@@ -21,7 +21,7 @@ AttributeData AttributeData::getAttributeData(string fileName)
     while(getline(attrFile, line))
     {
         save++;
-        if (save>10000000) break;
+        //if (save>10000000) break;
         node++;
         stringstream sin(line);
         Attribute a;

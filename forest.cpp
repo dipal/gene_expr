@@ -42,7 +42,7 @@ Forest Forest::merge(Forest f, int item, double threshold, int minMatch, Attribu
     int numAttributes = attrData.numAttributes;
     for (int i=0; i<numAttributes; i++)
     {
-        //if (!f.usedAttribtues[i]) continue;
+        if (!f.usedAttribtues[i]) continue;
 
         int cnt=0;
         for (int j=0; j<f.items.size(); j++)
@@ -53,8 +53,8 @@ Forest Forest::merge(Forest f, int item, double threshold, int minMatch, Attribu
             }
         }
 
-        //if (cnt==f.items.size()) mergedForest.usedAttribtues[i] = true;
-        //else mergedForest.usedAttribtues[i] = false;
+        if (cnt==f.items.size()) mergedForest.usedAttribtues[i] = true;
+        else mergedForest.usedAttribtues[i] = false;
     }
 
     return mergedForest;
@@ -91,20 +91,20 @@ bool Forest::matchAttribute(Forest f, int item, double threshold, int minMatch, 
     int match=0;
     for (int i=0; i<numAttributes; i++)
     {
-        //if (!f.usedAttribtues[i]) continue;
+        if (!f.usedAttribtues[i]) continue;
         int cnt=0;
         for (int j=0; j<f.items.size(); j++)
         {
 
-            if (item==537)
-                log("       "<<attrData.attrs[f.items[j]][i]<<"\t\t"<<attrData.attrs[item][i]<<"\t\t"<<fabs(attrData.attrs[f.items[j]][i]-attrData.attrs[item][i])<<" "<<isless(fabs(attrData.attrs[f.items[j]][i]-attrData.attrs[item][i]), threshold));
+            //if (item==537)
+            //    log("       "<<attrData.attrs[f.items[j]][i]<<"\t\t"<<attrData.attrs[item][i]<<"\t\t"<<fabs(attrData.attrs[f.items[j]][i]-attrData.attrs[item][i])<<" "<<isless(fabs(attrData.attrs[f.items[j]][i]-attrData.attrs[item][i]), threshold));
             if (islessequal(fabs(attrData.attrs[f.items[j]][i]-attrData.attrs[item][i]), threshold))
             {
                 cnt++;
             }
         }
-        if (item==537)
-            log("got count "<<cnt<<" "<<f.items.size());
+        //if (item==537)
+        //    log("got count "<<cnt<<" "<<f.items.size());
         if (cnt==f.items.size()) match++;
     }
     log("               "<<match<<" "<<minMatch);
