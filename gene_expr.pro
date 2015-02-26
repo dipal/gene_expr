@@ -13,4 +13,6 @@ HEADERS += \
     graphhelper.h \
     calculator.h \
     forest.h \
-    debug.h
+    debug.h \
+    timer.h
+QMAKE_CXXFLAGS += -std=c++11

@@ -2,14 +2,17 @@
 #include "graphhelper.h"
 #include <iostream>
 #include <sstream>
+#include <thread>
+#include <cmath>
 #include "debug.h"
 
-Calculator::Calculator(GraphInputData iGraph, AttributeData iAttr, double iAttributeThreshold, int iMinMatch)
+Calculator::Calculator(GraphInputData iGraph, AttributeData iAttr, double iAttributeThreshold, int iMinMatch, int iThreads)
 {
     graph = iGraph;
     attributeData = iAttr;
     threshold = iAttributeThreshold+1e-6;
     minMatch = iMinMatch;
+    numThreads = iThreads;
 
     adjMatrix = GraphHelper::createAdjMatrix(graph.edges, graph.numNodes);
     adjList = GraphHelper::createAdjList(graph.edges, graph.numNodes);
@@ -78,32 +81,32 @@ bool Calculator::isSeqExist(Forest f, bool compareAttribute)
 }
 
 
-void Calculator::mine(Forest f)
+void Calculator::mine(Forest f, Calculator &calculator)
 {
     log("visiting "<<f.toString()<<" : "<<f.attrToString());
 
-    vector<int> neighbourList = f.getNeighbourList(adjList);
+    vector<int> neighbourList = f.getNeighbourList(calculator.adjList);
 
     bool mergedOne = false;
-    visited[f.toString()] = true;
+    calculator.visited[f.toString()] = true;
     for (int i=0; i<neighbourList.size(); i++)
     {
         int item = neighbourList[i];
 
-        if (Forest::matchAttribute(f, item, threshold, minMatch, attributeData)==false)
+        if (Forest::matchAttribute(f, item, calculator.threshold, calculator.minMatch, calculator.attributeData)==false)
         {
             //discard it
             log("       prunning for attribute ");
-            prunning++;
+            calculator.prunning++;
             continue;
         }
 
-        Forest mergedForest = Forest::merge(f, item, threshold, minMatch, attributeData);
-        if (alreadyTravarsed(mergedForest))
+        Forest mergedForest = Forest::merge(f, item, calculator.threshold, calculator.minMatch, calculator.attributeData);
+        if (calculator.alreadyTravarsed(mergedForest))
         {
             //discard it
             log("prunning "<<mergedForest.toString()<<" for alread traversed");
-            prunning++;
+            calculator.prunning++;
             continue;
         }
 
@@ -120,15 +123,15 @@ void Calculator::mine(Forest f)
 
         mergedOne=true;
 
-        mine(mergedForest);
+        mine(mergedForest, calculator);
     }
 
     if (!mergedOne)
     {
-        if (!isSeqExist(f, false) && f.items.size()>=4)
+        if (f.items.size()>=4)
         {
             //cout<<"found one"<<endl;
-            finalSequences.push_back(f);
+            calculator.allSequences.push_back(f);
             log("merging sequence "<<f.toString());
         }
     }
@@ -136,17 +139,47 @@ void Calculator::mine(Forest f)
     log("completed visiting "<<f.toString());
 }
 
+void t(int start, int end)
+{
+    for (int i=start; i<end; i++) cout<<i<<endl;
+}
+
+void Calculator::startMining(int start, int end, Calculator &calculator)
+{
+    //cout<<start<<" "<<end<<endl;
+    for (int item=start; item<end; item++)
+    {
+        mine(Forest(item, calculator.attributeData.numAttributes), calculator);
+    }
+}
+
 void Calculator::calculate()
 {
     for (int item=0; item<graph.numNodes; item++)
     {
         //int item=45;
-        mine(Forest(item, attributeData.numAttributes));
+        //mine(Forest(item, attributeData.numAttributes), *this);
     }
+
+    int slot = ceil(graph.numNodes/(numThreads*1.));
+    vector<thread> threads;
+    for (int i=0; i<graph.numNodes; i+=slot)
+    {
+        //cout<<i<<" "<<min(graph.numNodes,i+slot)<<endl;
+        threads.push_back(thread(startMining, i, min(graph.numNodes, i+slot), ref(*this)));
+    }
+
+    cout<<slot<<" "<<graph.numNodes<<endl;
+    for (int i=0; i<threads.size(); i++)
+    {
+        threads[i].join();
+    }
+
 }
 
 void Calculator::printResult()
 {
+    finalSequences = allSequences;
     cout<<"Total found sequences "<<finalSequences.size()<<endl;
     for (int i=0; i<finalSequences.size(); i++)
     {
