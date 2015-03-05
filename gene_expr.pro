@@ -15,4 +15,7 @@ HEADERS += \
     forest.h \
     debug.h \
     timer.h
+#CONFIG += c++11
 QMAKE_CXXFLAGS += -std=c++11
+#QMAKE += -std=gnu++0x
+#QMAKE_CXXFLAGS = -std=c++0x

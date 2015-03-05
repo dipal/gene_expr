@@ -20,6 +20,7 @@ public:
     double threshold;
     int minMatch;
     int numThreads;
+    static mutex m;
 
     map<string,bool> visited;
 
