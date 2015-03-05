@@ -4,8 +4,9 @@
 #include <sstream>
 #include <thread>
 #include <cmath>
-#include <mutex>
 #include "debug.h"
+
+mutex Calculator::m;
 
 Calculator::Calculator(GraphInputData iGraph, AttributeData iAttr, double iAttributeThreshold, int iMinMatch, int iThreads)
 {
@@ -132,10 +133,10 @@ void Calculator::mine(Forest f, Calculator &calculator)
         if (f.items.size()>=4)
         {
             //cout<<"found one"<<endl;
-            m.lock();
+            Calculator::m.lock();
             calculator.allSequences.push_back(f);
             log("merging sequence "<<f.toString());
-            m.unlock();
+            Calculator::m.unlock();
         }
     }
 
