@@ -32,6 +32,7 @@ public:
     bool alreadyTravarsed(Forest f);
     void markTravarsed(Forest f);
     bool isSeqExist(Forest f, bool compareAttribute = false);
+    void mergeAll();
     void printResult();
 };
 

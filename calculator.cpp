@@ -4,6 +4,7 @@
 #include <sstream>
 #include <thread>
 #include <cmath>
+#include <algorithm>
 #include "debug.h"
 
 mutex Calculator::m;
@@ -80,6 +81,25 @@ bool Calculator::isSeqExist(Forest f, bool compareAttribute)
     }
 
     return false;
+}
+
+void Calculator::mergeAll()
+{
+    sort(allSequences.begin(), allSequences.end(), [](Forest &a, Forest &b){
+        return a.items.size()>b.items.size();
+    });
+
+    if (allSequences.size()==0)
+    {
+        return ;
+    }
+
+    finalSequences.push_back(allSequences[0]);
+    for (int i=1; i<allSequences.size(); i++)
+    {
+        if (isSeqExist(allSequences[i])) continue;
+        finalSequences.push_back(allSequences[i]);
+    }
 }
 
 
@@ -173,18 +193,24 @@ void Calculator::calculate()
         threads.push_back(thread(startMining, i, min(graph.numNodes, i+slot), ref(*this)));
     }
 
-    cout<<slot<<" "<<graph.numNodes<<endl;
     for (int i=0; i<threads.size(); i++)
     {
         threads[i].join();
     }
 
+    mergeAll();
 }
 
 void Calculator::printResult()
 {
-    finalSequences = allSequences;
-    cout<<"Total found sequences "<<finalSequences.size()<<endl;
+    //finalSequences = allSequences;
+    /*cout<<"Total found sequences "<<allSequences.size()<<endl;
+    for (int i=0; i<allSequences.size(); i++)
+    {
+        cout<<allSequences[i].toString()<<endl;
+    }*/
+
+    cout<<"Total found actual sequences "<<finalSequences.size()<<endl;
     for (int i=0; i<finalSequences.size(); i++)
     {
         cout<<finalSequences[i].toString()<<endl;
