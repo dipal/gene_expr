@@ -15,7 +15,7 @@
 using namespace std;
 
 
-int main(int argc, char *argv[])
+int main()
 {
     //freopen("out.txt","w",stdout);
 
@@ -25,22 +25,28 @@ int main(int argc, char *argv[])
     int minMatch = 70;
     int thread = 5;
 
-    if (argc>1) threshold = stod(argv[1]);
-    if (argc>2) minMatch = stoi(argv[2]);
-    if (argc>3) thread = stoi(argv[3]);
+    cout<<"Threshold: ";
+    cin>>threshold;
+    cout<<"Minimum Match: ";
+    cin>>minMatch;
+    cout<<"Thread: ";
+    cin>>thread;
 
+    cout<<"reading data.. "<<endl;
     GraphInputData graph = GraphInputData::getData("network.txt");
     AttributeData attribute = AttributeData::getAttributeData("attrs.txt");
 
+    cout<<"completed reading data"<<endl;
     GET_TIME(start);
 
+    cout<<"running calculation"<<endl;
     Calculator calc(graph, attribute, threshold, minMatch, thread);
     calc.calculate();
 
     GET_TIME(end);
     elapsed = end-start;
-    cout<<elapsed<<"\n";
     calc.printResult();
+    cout<<elapsed<<"\n";
 
     return 0;
 }
