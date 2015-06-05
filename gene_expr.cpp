@@ -25,12 +25,12 @@ int main()
     int minMatch = 70;
     int thread = 5;
 
-//    cout<<"Threshold: ";
-//    cin>>threshold;
-//    cout<<"Minimum Match: ";
-//    cin>>minMatch;
-//    cout<<"Thread: ";
-//    cin>>thread;
+    cout<<"Threshold: ";
+    cin>>threshold;
+    cout<<"Minimum Match: ";
+    cin>>minMatch;
+    cout<<"Thread: ";
+    cin>>thread;
 
     cout<<"reading data.. "<<endl;
     GraphInputData graph = GraphInputData::getData("HumanBiogrid3.3.124Network.txt");
