@@ -6,6 +6,8 @@
 #include <algorithm>
 #include "debug.h"
 
+#define INVALID_VAL -100
+
 Forest::Forest(int item, int numOfAttribute)
 {
     items.clear();
@@ -43,7 +45,11 @@ Forest Forest::merge(Forest f, int item, double threshold, int minMatch, Attribu
     for (int i=0; i<numAttributes; i++)
     {
         if (!f.usedAttribtues[i]) continue;
-
+        if (attrData.attrs[item][i] == INVALID_VAL)
+        {
+            mergedForest.usedAttribtues[i] = false;
+            continue;
+        }
         int cnt=0;
         for (int j=0; j<f.items.size(); j++)
         {
@@ -92,6 +98,7 @@ bool Forest::matchAttribute(Forest f, int item, double threshold, int minMatch, 
     for (int i=0; i<numAttributes; i++)
     {
         if (!f.usedAttribtues[i]) continue;
+        if (attrData.attrs[item][i] == INVALID_VAL) continue;
         int cnt=0;
         for (int j=0; j<f.items.size(); j++)
         {
