@@ -85,7 +85,7 @@ bool Calculator::isSeqExist(Forest f, bool compareAttribute)
 
 void Calculator::mergeAll()
 {
-    sort(allSequences.begin(), allSequences.end(), [](Forest &a, Forest &b){
+    sort(allSequences.begin(), allSequences.end(), [](Forest a, Forest b){
         return a.items.size()>b.items.size();
     });
 

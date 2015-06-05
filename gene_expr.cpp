@@ -25,16 +25,17 @@ int main()
     int minMatch = 70;
     int thread = 5;
 
-    cout<<"Threshold: ";
-    cin>>threshold;
-    cout<<"Minimum Match: ";
-    cin>>minMatch;
-    cout<<"Thread: ";
-    cin>>thread;
+//    cout<<"Threshold: ";
+//    cin>>threshold;
+//    cout<<"Minimum Match: ";
+//    cin>>minMatch;
+//    cout<<"Thread: ";
+//    cin>>thread;
 
     cout<<"reading data.. "<<endl;
-    GraphInputData graph = GraphInputData::getData("network.txt");
-    AttributeData attribute = AttributeData::getAttributeData("attrs.txt");
+    GraphInputData graph = GraphInputData::getData("HumanBiogrid3.3.124Network.txt");
+    cout<<"numnodes "<<graph.numNodes<<endl;
+    AttributeData attribute = AttributeData::getAttributeData("BIO_GRID.3.3.124_disease_data_39.txt");
 
     cout<<"completed reading data"<<endl;
     GET_TIME(start);
