@@ -8,11 +8,16 @@
 
 #define INVALID_VAL -100
 
-Forest::Forest(int item, int numOfAttribute)
+Forest::Forest(int item, AttributeData &attrData)
 {
+    int numOfAttribute = attrData.numAttributes;
     items.clear();
     items.push_back(item);
     usedAttribtues = vector<bool> (numOfAttribute, true);
+    for(int i= 0;i< numOfAttribute;i++){
+        if(attrData.attrs[item][i]== INVALID_VAL)
+             usedAttribtues[i]=false;
+    }
 }
 
 vector<int> Forest::getNeighbourList(AdjacencyList &adjList)
@@ -90,26 +95,16 @@ string Forest::attrToString()
     return sout.str();
 }
 
-bool Forest::matchAttribute(Forest f, int item, double threshold, int minMatch, AttributeData &attrData)
+int Forest::matchAttribute(Forest f)
 {
-    int numAttributes = attrData.numAttributes;
+
 
     int match=0;
-    for (int i=0; i<numAttributes; i++)
+    for (int i=0; i<f.usedAttribtues.size(); i++)
     {
-        if (!f.usedAttribtues[i]) continue;
-        if (attrData.attrs[item][i] == INVALID_VAL) continue;
-        int cnt=0;
-        for (int j=0; j<f.items.size(); j++)
-        {
-
-            if (islessequal(fabs(attrData.attrs[f.items[j]][i]-attrData.attrs[item][i]), threshold))
-            {
-                cnt++;
-            }
-        }
-        if (cnt==f.items.size()) match++;
+        if (f.usedAttribtues[i])
+           match++;
     }
-    log("               "<<match<<" "<<minMatch);
-    return match>=minMatch;
+    log("               "<<match);
+    return match;
 }

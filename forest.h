@@ -9,10 +9,10 @@ public:
     vector<int> items;
     vector<bool> usedAttribtues;
 
-    Forest(int item, int numOfAttribute);
+    Forest(int item, AttributeData &attrData);
     vector<int> getNeighbourList(AdjacencyList &adjList);
     static Forest merge(Forest f, int item, double threshold, int minMatch, AttributeData &attrData);
-    static bool matchAttribute(Forest f, int item, double threshold, int minMatch, AttributeData &attrData);
+    static int matchAttribute(Forest f);
     string toString();
     string attrToString();
 };

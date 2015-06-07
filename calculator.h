@@ -28,7 +28,7 @@ public:
     Calculator(GraphInputData iGraph, AttributeData iAttr, double iAttributeThreshold, int iMinMatch, int iThreads=1);
     void calculate();
     static void mine(Forest f, Calculator &calculator);
-    static void startMining(int start, int end, Calculator &calculator);
+    static void startMining(int start, int end, Calculator &calculator,int minM);
     bool alreadyTravarsed(Forest f);
     void markTravarsed(Forest f);
     bool isSeqExist(Forest f, bool compareAttribute = false);

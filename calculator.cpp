@@ -115,15 +115,15 @@ void Calculator::mine(Forest f, Calculator &calculator)
     {
         int item = neighbourList[i];
 
-        if (Forest::matchAttribute(f, item, calculator.threshold, calculator.minMatch, calculator.attributeData)==false)
-        {
-            //discard it
-            log("       prunning for attribute ");
-            calculator.prunning++;
-            continue;
-        }
 
         Forest mergedForest = Forest::merge(f, item, calculator.threshold, calculator.minMatch, calculator.attributeData);
+        if(Forest::matchAttribute(mergedForest) < calculator.minMatch)
+        {
+            log("       prunning for attribute ");
+            calculator.prunning++;
+           continue;
+        }
+
         if (calculator.alreadyTravarsed(mergedForest))
         {
             //discard it
@@ -168,13 +168,19 @@ void t(int start, int end)
     for (int i=start; i<end; i++) cout<<i<<endl;
 }
 
-void Calculator::startMining(int start, int end, Calculator &calculator)
+void Calculator::startMining(int start, int end, Calculator &calculator,int minM)
 {
     //cout<<start<<" "<<end<<endl;
+    int level1Cnt =0;
     for (int item=start; item<end; item++)
     {
-        mine(Forest(item, calculator.attributeData.numAttributes), calculator);
+        Forest f = Forest(item, calculator.attributeData);
+        if(Forest::matchAttribute(f) >= minM){
+          mine(f, calculator);
+          level1Cnt++;
+        }
     }
+    cout<<"Level One: Good Patterns:"<< level1Cnt<<endl;
 }
 
 void Calculator::calculate()
@@ -190,7 +196,7 @@ void Calculator::calculate()
     for (int i=0; i<graph.numNodes; i+=slot)
     {
         //cout<<i<<" "<<min(graph.numNodes,i+slot)<<endl;
-        threads.push_back(thread(startMining, i, min(graph.numNodes, i+slot), ref(*this)));
+        threads.push_back(thread(startMining, i, min(graph.numNodes, i+slot), ref(*this),minMatch));
     }
 
     for (int i=0; i<threads.size(); i++)
