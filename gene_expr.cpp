@@ -15,22 +15,26 @@
 using namespace std;
 
 
-int main()
+int main(int argc, char **argv)
 {
     //freopen("out.txt","w",stdout);
 
+    if (argc<4)
+    {
+        cout<<"Usage: ./gene_expr <threshold> <min_match> <thread>"<<endl;
+        cout<<"./gene_expr 0.3 70 5"<<endl;
+        return 0;
+    }
+
     double start,end,elapsed;
 
-    double threshold = 0.3;
-    int minMatch = 70;
-    int thread = 5;
+    double threshold = strtod(argv[1], NULL);
+    int minMatch = strtol(argv[2], NULL, 10);
+    int thread = strtol(argv[3], NULL, 10);
 
-    cout<<"Threshold: ";
-    cin>>threshold;
-    cout<<"Minimum Match: ";
-    cin>>minMatch;
-    cout<<"Thread: ";
-    cin>>thread;
+    cout<<"Threshold: "<<threshold<<endl;
+    cout<<"Minimum Match: "<<minMatch<<endl;
+    cout<<"Thread: "<<thread<<endl;
 
     cout<<"reading data.. "<<endl;
     GraphInputData graph = GraphInputData::getData("HumanBiogrid3.3.124Network.txt");
