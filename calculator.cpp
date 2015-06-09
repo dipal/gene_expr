@@ -150,7 +150,7 @@ void Calculator::mine(Forest f, Calculator &calculator)
 
     if (!mergedOne)
     {
-        if (f.items.size()>=4)
+        if (f.items.size()>=2)
         {
             //cout<<"found one"<<endl;
             Calculator::m.lock();
