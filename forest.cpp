@@ -58,7 +58,7 @@ Forest Forest::merge(Forest f, int item, double threshold, int minMatch, Attribu
         int cnt=0;
         for (int j=0; j<f.items.size(); j++)
         {
-            if (islessequal(fabs(attrData.attrs[f.items[j]][i]-attrData.attrs[item][i]), threshold))
+            if (attrData.attrs[f.items[j]][i]==1 && attrData.attrs[item][i]==1)
             {
                 cnt++;
             }
