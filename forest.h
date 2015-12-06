@@ -7,7 +7,7 @@ class Forest
 {
 public:
     vector<int> items;
-    vector<bool> usedAttribtues;
+    vector<bool> forrestAttribtue;
 
     Forest(int item, AttributeData &attrData);
     vector<int> getNeighbourList(AdjacencyList &adjList);

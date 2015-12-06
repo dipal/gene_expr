@@ -13,6 +13,7 @@ class Calculator
 public:
     GraphInputData graph;
     AttributeData attributeData;
+    ClassLabel classLabel;
     AdjacencyMatrix adjMatrix;
     AdjacencyList adjList;
     int prunning;
@@ -25,8 +26,9 @@ public:
 
     map<string,bool> visited;
 
-    Calculator(GraphInputData iGraph, AttributeData iAttr, double iAttributeThreshold, int iMinMatch, int iThreads=1);
+    Calculator(GraphInputData iGraph, AttributeData iAttr, double iAttributeThreshold, int iMinMatch, ClassLabel iClassLabel, int iThreads=1);
     void calculate();
+    double delta(Attribute attributeList);
     static void mine(Forest f, Calculator &calculator);
     static void startMining(int start, int end, Calculator &calculator,int minM);
     bool alreadyTravarsed(Forest f);

@@ -8,7 +8,7 @@ using namespace std;
 typedef vector<vector<int> > AdjacencyMatrix;
 typedef vector<vector<int> > AdjacencyList;
 typedef vector<pair<int,int> > EdgeList;
-typedef vector<double> Attribute;
-
+typedef vector<bool> Attribute;
+typedef vector<bool> ClassLabel;
 
 #endif // GRAPH_H

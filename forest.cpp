@@ -13,11 +13,7 @@ Forest::Forest(int item, AttributeData &attrData)
     int numOfAttribute = attrData.numAttributes;
     items.clear();
     items.push_back(item);
-    usedAttribtues = vector<bool> (numOfAttribute, true);
-    for(int i= 0;i< numOfAttribute;i++){
-        if(attrData.attrs[item][i]== INVALID_VAL)
-             usedAttribtues[i]=false;
-    }
+    forrestAttribtue = attrData.attrs[item];
 }
 
 vector<int> Forest::getNeighbourList(AdjacencyList &adjList)
@@ -43,30 +39,18 @@ Forest Forest::merge(Forest f, int item, double threshold, int minMatch, Attribu
 {
     Forest mergedForest = f;
 
-    mergedForest.items.push_back(item);
-    sort(mergedForest.items.begin(), mergedForest.items.end());
-
     int numAttributes = attrData.numAttributes;
     for (int i=0; i<numAttributes; i++)
     {
-        if (!f.usedAttribtues[i]) continue;
-        if (attrData.attrs[item][i] == INVALID_VAL)
-        {
-            mergedForest.usedAttribtues[i] = false;
-            continue;
-        }
-        int cnt=0;
-        for (int j=0; j<f.items.size(); j++)
-        {
-            if (attrData.attrs[f.items[j]][i]==1 && attrData.attrs[item][i]==1)
-            {
-                cnt++;
-            }
-        }
 
-        if (cnt==f.items.size()) mergedForest.usedAttribtues[i] = true;
-        else mergedForest.usedAttribtues[i] = false;
+        if (f.forrestAttribtue[i] == 1 || attrData.attrs[item][i]==1)
+        {
+            mergedForest.forrestAttribtue[i] = true;
+        }
     }
+
+    mergedForest.items.push_back(item);
+    sort(mergedForest.items.begin(), mergedForest.items.end());
 
     return mergedForest;
 }
@@ -89,7 +73,7 @@ string Forest::attrToString()
 {
     stringstream sout;
     sout<<"{";
-    for (int i=0; i<usedAttribtues.size(); i++) sout<<usedAttribtues[i];
+    for (int i=0; i<forrestAttribtue.size(); i++) sout<<forrestAttribtue[i];
     sout<<"}";
 
     return sout.str();
@@ -97,12 +81,10 @@ string Forest::attrToString()
 
 int Forest::matchAttribute(Forest f)
 {
-
-
     int match=0;
-    for (int i=0; i<f.usedAttribtues.size(); i++)
+    for (int i=0; i<f.forrestAttribtue.size(); i++)
     {
-        if (f.usedAttribtues[i])
+        if (f.forrestAttribtue[i])
            match++;
     }
     log("               "<<match);

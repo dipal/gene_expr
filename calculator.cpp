@@ -9,10 +9,11 @@
 
 mutex Calculator::m;
 
-Calculator::Calculator(GraphInputData iGraph, AttributeData iAttr, double iAttributeThreshold, int iMinMatch, int iThreads)
+Calculator::Calculator(GraphInputData iGraph, AttributeData iAttr, double iAttributeThreshold, int iMinMatch, ClassLabel iClassLabel, int iThreads)
 {
     graph = iGraph;
     attributeData = iAttr;
+    classLabel = iClassLabel;
     threshold = iAttributeThreshold+1e-6;
     minMatch = iMinMatch;
     numThreads = iThreads;
@@ -117,7 +118,7 @@ void Calculator::mine(Forest f, Calculator &calculator)
 
 
         Forest mergedForest = Forest::merge(f, item, calculator.threshold, calculator.minMatch, calculator.attributeData);
-        if(Forest::matchAttribute(mergedForest) < calculator.minMatch)
+        if (calculator.delta(mergedForest.forrestAttribtue) >= calculator.delta(calculator.attributeData.attrs[item]))
         {
             log("       prunning for attribute ");
             calculator.prunning++;
@@ -175,10 +176,8 @@ void Calculator::startMining(int start, int end, Calculator &calculator,int minM
     for (int item=start; item<end; item++)
     {
         Forest f = Forest(item, calculator.attributeData);
-        if(Forest::matchAttribute(f) >= minM){
-          mine(f, calculator);
-          level1Cnt++;
-        }
+        mine(f, calculator);
+        level1Cnt++;
     }
     cout<<"Level One: Good Patterns:"<< level1Cnt<<endl;
 }
@@ -190,8 +189,8 @@ void Calculator::calculate()
         //int item=45;
         //mine(Forest(item, attributeData.numAttributes), *this);
     }
-
-    int slot = ceil(graph.numNodes/(numThreads*1.));
+    startMining(0, graph.numNodes, ref(*this),minMatch);
+    /*int slot = ceil(graph.numNodes/(numThreads*1.));
     vector<thread> threads;
     for (int i=0; i<graph.numNodes; i+=slot)
     {
@@ -203,8 +202,39 @@ void Calculator::calculate()
     {
         threads[i].join();
     }
-
+    */
     mergeAll();
+}
+
+double Calculator::delta(Attribute attributeList)
+{
+    double totalCase=0, totalControl=0;
+    for (int i=0; i<classLabel.size(); i++)
+    {
+        if (classLabel[i] == true)
+        {
+            totalCase++;
+        }
+        else
+        {
+            totalControl++;
+        }
+    }
+
+    double caseCount=0, controlCount=0;
+    for (int i=0; i<attributeList.size(); i++)
+    {
+        if (attributeList[i] == true)
+        {
+            caseCount++;
+        }
+        else
+        {
+            controlCount++;
+        }
+    }
+
+    return (caseCount/totalCase) - (controlCount/totalControl);
 }
 
 void Calculator::printResult()

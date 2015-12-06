@@ -20,6 +20,7 @@ public:
     AttributeData();
 
     static AttributeData getAttributeData(string fileName);
+    static ClassLabel getClassLabel(string fileName);
 };
 
 #endif // ATTRIBUTEDATA_H

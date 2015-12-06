@@ -25,7 +25,7 @@ AttributeData AttributeData::getAttributeData(string fileName)
         node++;
         stringstream sin(line);
         Attribute a;
-        double val;
+        bool val;
         while (sin>>val)
         {
             a.push_back(val);
@@ -43,4 +43,21 @@ AttributeData AttributeData::getAttributeData(string fileName)
     attrData.numAttributes = numAttr;
 
     return attrData;
+}
+
+ClassLabel AttributeData::getClassLabel(string fileName)
+{
+    vector<bool> classLabel;
+    ifstream attrFile(fileName.c_str());
+
+    string line;
+    getline(attrFile, line);
+    stringstream sin(line);
+    bool val;
+    while (sin>>val)
+    {
+        classLabel.push_back(val);
+    }
+
+    return classLabel;
 }
