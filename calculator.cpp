@@ -112,13 +112,17 @@ void Calculator::mine(Forest f, Calculator &calculator)
 
     bool mergedOne = false;
     calculator.visited[f.toString()] = true;
+
+    int maxNeighbour = -1;
+    double maxDelta = -100;
     for (int i=0; i<neighbourList.size(); i++)
     {
         int item = neighbourList[i];
 
-
         Forest mergedForest = Forest::merge(f, item, calculator.threshold, calculator.minMatch, calculator.attributeData);
-        if (calculator.delta(mergedForest.forrestAttribtue) >= calculator.delta(calculator.attributeData.attrs[item]))
+
+        double newDelta = calculator.delta(mergedForest.forrestAttribtue);
+        if (newDelta >= calculator.delta(calculator.attributeData.attrs[item]))
         {
             log("       prunning for attribute ");
             calculator.prunning++;
@@ -131,6 +135,12 @@ void Calculator::mine(Forest f, Calculator &calculator)
             log("prunning "<<mergedForest.toString()<<" for alread traversed");
             calculator.prunning++;
             continue;
+        }
+
+        if (newDelta > maxDelta)
+        {
+            maxDelta = newDelta;
+            maxNeighbour = i;
         }
 
         /*if (isSeqExist(mergedForest)) //check in existing sequences
@@ -146,6 +156,13 @@ void Calculator::mine(Forest f, Calculator &calculator)
 
         mergedOne=true;
 
+        //mine(mergedForest, calculator);
+    }
+
+    if (maxNeighbour>=0)
+    {
+        int item = neighbourList[maxNeighbour];
+        Forest mergedForest = Forest::merge(f, item, calculator.threshold, calculator.minMatch, calculator.attributeData);
         mine(mergedForest, calculator);
     }
 
