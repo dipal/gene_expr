@@ -32,9 +32,9 @@ int main(int argc, char **argv)
     int minMatch;// = strtol(argv[2], NULL, 10);
     int thread;// = strtol(argv[3], NULL, 10);
 
-    cout<<"Threshold: "<<threshold<<endl;
-    cout<<"Minimum Match: "<<minMatch<<endl;
-    cout<<"Thread: "<<thread<<endl;
+    //cout<<"Threshold: "<<threshold<<endl;
+    //cout<<"Minimum Match: "<<minMatch<<endl;
+    //cout<<"Thread: "<<thread<<endl;
 
     cout<<"reading data.. "<<endl;
     GraphInputData graph = GraphInputData::getData("PoCo_graph.txt");

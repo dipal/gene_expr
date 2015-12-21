@@ -4,7 +4,7 @@
 
 using namespace std;
 
-#define log(x) cout<<x<<endl;
-//#define log(x)
+//#define log(x) cout<<x<<endl;
+#define log(x)
 
 #endif // DEBUG_H
